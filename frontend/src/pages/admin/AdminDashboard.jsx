@@ -211,18 +211,22 @@ function ProfileManager() {
 
           <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
              <h3 className="font-bold text-gray-800 tracking-wide mb-6">Data Statistik Orang</h3>
-             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div>
                   <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Peserta Didik</label>
-                  <input type="number" className="w-full border-2 border-white focus:border-emerald-500 rounded-lg p-3 outline-none shadow-sm" value={data.studentCount || 0} onChange={e => setData({...data, studentCount: e.target.value})} />
+                  <input type="number" className="w-full border-2 border-white focus:border-emerald-500 rounded-lg p-3 outline-none shadow-sm" value={data.studentCount || 0} onChange={e => setData({...data, studentCount: Number(e.target.value)})} />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Tenaga Pendidik</label>
-                  <input type="number" className="w-full border-2 border-white focus:border-emerald-500 rounded-lg p-3 outline-none shadow-sm" value={data.teacherCount || 0} onChange={e => setData({...data, teacherCount: e.target.value})} />
+                  <input type="number" className="w-full border-2 border-white focus:border-emerald-500 rounded-lg p-3 outline-none shadow-sm" value={data.teacherCount || 0} onChange={e => setData({...data, teacherCount: Number(e.target.value)})} />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Staf Kependidikan</label>
+                  <input type="number" className="w-full border-2 border-white focus:border-emerald-500 rounded-lg p-3 outline-none shadow-sm" value={data.staffCount || 0} onChange={e => setData({...data, staffCount: Number(e.target.value)})} />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Estimasi Alumni</label>
-                  <input type="number" className="w-full border-2 border-white focus:border-emerald-500 rounded-lg p-3 outline-none shadow-sm" value={data.alumniCount || 0} onChange={e => setData({...data, alumniCount: e.target.value})} />
+                  <input type="number" className="w-full border-2 border-white focus:border-emerald-500 rounded-lg p-3 outline-none shadow-sm" value={data.alumniCount || 0} onChange={e => setData({...data, alumniCount: Number(e.target.value)})} />
                 </div>
              </div>
              
@@ -230,19 +234,19 @@ function ProfileManager() {
              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div>
                   <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Internasional</label>
-                  <input type="number" className="w-full border-2 border-white focus:border-emerald-500 rounded-lg p-3 outline-none shadow-sm" value={data.achievementInt || 0} onChange={e => setData({...data, achievementInt: e.target.value})} />
+                  <input type="number" className="w-full border-2 border-white focus:border-emerald-500 rounded-lg p-3 outline-none shadow-sm" value={data.achievementInt || 0} onChange={e => setData({...data, achievementInt: Number(e.target.value)})} />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Nasional</label>
-                  <input type="number" className="w-full border-2 border-white focus:border-emerald-500 rounded-lg p-3 outline-none shadow-sm" value={data.achievementNat || 0} onChange={e => setData({...data, achievementNat: e.target.value})} />
+                  <input type="number" className="w-full border-2 border-white focus:border-emerald-500 rounded-lg p-3 outline-none shadow-sm" value={data.achievementNat || 0} onChange={e => setData({...data, achievementNat: Number(e.target.value)})} />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Provinsi</label>
-                  <input type="number" className="w-full border-2 border-white focus:border-emerald-500 rounded-lg p-3 outline-none shadow-sm" value={data.achievementProv || 0} onChange={e => setData({...data, achievementProv: e.target.value})} />
+                  <input type="number" className="w-full border-2 border-white focus:border-emerald-500 rounded-lg p-3 outline-none shadow-sm" value={data.achievementProv || 0} onChange={e => setData({...data, achievementProv: Number(e.target.value)})} />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Regional/Kota</label>
-                  <input type="number" className="w-full border-2 border-white focus:border-emerald-500 rounded-lg p-3 outline-none shadow-sm" value={data.achievementReg || 0} onChange={e => setData({...data, achievementReg: e.target.value})} />
+                  <input type="number" className="w-full border-2 border-white focus:border-emerald-500 rounded-lg p-3 outline-none shadow-sm" value={data.achievementReg || 0} onChange={e => setData({...data, achievementReg: Number(e.target.value)})} />
                 </div>
              </div>
           </div>
@@ -254,7 +258,7 @@ function ProfileManager() {
 
 function NewsManager() {
   const [news, setNews] = useState([]);
-  const [form, setForm] = useState({ title: '', content: '' });
+  const [form, setForm] = useState({ title: '', content: '', imageUrl: '' });
 
   useEffect(() => { loadNews(); }, []);
 
@@ -264,7 +268,7 @@ function NewsManager() {
     e.preventDefault();
     try {
       await api.post('/news', form);
-      setForm({ title: '', content: '' });
+      setForm({ title: '', content: '', imageUrl: '' });
       loadNews();
     } catch(err) { alert('Gagal mendisimpan. Login Anda mungkin sudah kedaluwarsa.'); }
   };
@@ -282,6 +286,13 @@ function NewsManager() {
           <h2 className="text-2xl font-extrabold mb-6 text-gray-900 border-l-8 border-emerald-600 pl-4">Tulis Pengumuman / Berita</h2>
           <form onSubmit={handleCreate} className="space-y-5">
             <input placeholder="Ketik Judul Berita di sini..." required className="w-full border-2 border-slate-200 focus:border-emerald-500 rounded-lg p-3 outline-none font-bold text-lg" value={form.title} onChange={e => setForm({...form, title: e.target.value})} />
+            
+            <div>
+               <label className="block text-xs font-bold text-gray-600 mb-2 uppercase">Unggah Foto Utama (Saran: Lanskap/Horizontal)</label>
+               {form.imageUrl && <img src={form.imageUrl} alt="News Preview" className="h-24 mb-2 object-cover rounded shadow" />}
+               <input type="file" accept="image/jpeg, image/png, image/jpg" className="w-full border-2 border-white focus:border-emerald-500 rounded-lg p-3 outline-none shadow-sm bg-slate-50" onChange={async e => { if (e.target.files[0]) { const url = await uploadImage(e.target.files[0]); if(url) setForm({...form, imageUrl: url}); } }} />
+            </div>
+
             <textarea placeholder="Isi Konten Berita lengkap..." required className="w-full border-2 border-slate-200 focus:border-emerald-500 rounded-lg p-3 outline-none h-40" value={form.content} onChange={e => setForm({...form, content: e.target.value})}></textarea>
             <button className="bg-emerald-600 text-white px-6 py-3 rounded-lg font-bold shadow-lg hover:bg-emerald-700 transition">Publikasikan Berita</button>
           </form>
@@ -307,7 +318,7 @@ function NewsManager() {
 
 function AchievementManager() {
   const [achievements, setAchievements] = useState([]);
-  const [form, setForm] = useState({ title: '', level: 'Nasional', date: '' });
+  const [form, setForm] = useState({ title: '', level: 'Nasional', date: '', imageUrl: '' });
 
   useEffect(() => { loadAch(); }, []);
 
@@ -317,7 +328,7 @@ function AchievementManager() {
     e.preventDefault();
     try {
       await api.post('/achievements', { ...form, date: form.date ? new Date(form.date) : new Date() });
-      setForm({ title: '', level: 'Nasional', date: '' });
+      setForm({ title: '', level: 'Nasional', date: '', imageUrl: '' });
       loadAch();
     } catch(err) { alert('Gagal mendisimpan. Login Anda mungkin sudah kedaluwarsa.'); }
   };
@@ -335,6 +346,13 @@ function AchievementManager() {
           <h2 className="text-2xl font-extrabold mb-6 text-gray-900 border-l-8 border-emerald-600 pl-4">Tambah Validasi Prestasi Baru</h2>
           <form onSubmit={handleCreate} className="space-y-5 flex flex-col">
             <input placeholder="Judul Prestasi (cth: Juara 1 Futsal Olimpiade 2026)" required className="w-full border-2 border-slate-200 focus:border-emerald-500 rounded-lg p-3 outline-none font-bold" value={form.title} onChange={e => setForm({...form, title: e.target.value})} />
+            
+            <div>
+               <label className="block text-xs font-bold text-gray-600 mb-2 uppercase">Dokumentasi (Foto Piala / Perlombaan)</label>
+               {form.imageUrl && <img src={form.imageUrl} alt="Prestasi View" className="h-24 mb-2 object-cover rounded shadow" />}
+               <input type="file" accept="image/jpeg, image/png, image/jpg" className="w-full border-2 border-white focus:border-emerald-500 rounded-lg p-3 outline-none shadow-sm bg-slate-50" onChange={async e => { if (e.target.files[0]) { const url = await uploadImage(e.target.files[0]); if(url) setForm({...form, imageUrl: url}); } }} />
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                <div>
                   <label className="block text-xs font-bold text-gray-500 mb-2 uppercase">Tanggal Prestasi</label>

@@ -93,9 +93,15 @@ export default function Achievements() {
                   <div className="absolute -right-8 -top-8 w-32 h-32 bg-emerald-50 rounded-full group-hover:bg-emerald-100 group-hover:scale-150 transition-all duration-700 -z-10"></div>
                   
                   <div className="flex justify-between items-start mb-6">
-                     <div className="w-14 h-14 bg-gradient-to-tr from-emerald-500 to-teal-400 rounded-2xl flex-shrink-0 flex items-center justify-center text-white text-2xl shadow-lg shadow-emerald-500/30 group-hover:rotate-12 transition-transform">
-                        🏆
-                     </div>
+                     {ach.imageUrl ? (
+                        <div className="w-20 h-20 rounded-2xl flex-shrink-0 overflow-hidden shadow-lg shadow-emerald-500/30 group-hover:rotate-6 transition-transform">
+                            <img src={ach.imageUrl} alt={ach.title} className="w-full h-full object-cover" />
+                        </div>
+                     ) : (
+                        <div className="w-14 h-14 bg-gradient-to-tr from-emerald-500 to-teal-400 rounded-2xl flex-shrink-0 flex items-center justify-center text-white text-2xl shadow-lg shadow-emerald-500/30 group-hover:rotate-12 transition-transform">
+                           🏆
+                        </div>
+                     )}
                      <span className={`px-4 py-1.5 text-xs font-bold rounded-full border ${ach.level.includes('Nasional') || ach.level.includes('Internasional') ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-blue-50 text-blue-700 border-blue-200'}`}>
                         {ach.level}
                      </span>

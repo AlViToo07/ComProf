@@ -44,6 +44,7 @@ export default function Home() {
   const schoolDesc = profile?.description || "Selamat datang di SMAN 4 Kota Bogor. Sekolah yang berkomitmen mengembangkan pendidikan berprestasi dan berkarakter menuju nilai kearifan lokal.";
   const students = profile?.studentCount || "1.035";
   const teachers = profile?.teacherCount || "45";
+  const staff = profile?.staffCount !== undefined ? profile.staffCount : "46";
   const alumni = profile?.alumniCount || "10.000+";
 
   const displayAchievements = achievements.length > 0 ? achievements.slice(0, 5) : [
@@ -168,7 +169,7 @@ export default function Home() {
               <p className="text-slate-500 text-sm font-bold tracking-wider uppercase group-hover:text-emerald-700 transition-colors">Tenaga Pendidik</p>
             </div>
             <div className="group hover:-translate-y-2 transition-transform duration-300">
-              <p className="text-4xl md:text-5xl font-black text-emerald-700 mb-2 drop-shadow-sm">46</p>
+              <p className="text-4xl md:text-5xl font-black text-emerald-700 mb-2 drop-shadow-sm">{staff}</p>
               <p className="text-slate-500 text-sm font-bold tracking-wider uppercase group-hover:text-emerald-700 transition-colors">Staf Kependidikan</p>
             </div>
             <div className="group hover:-translate-y-2 transition-transform duration-300">
@@ -272,8 +273,8 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row gap-16 items-center">
             <motion.div variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="w-full lg:w-1/3">
               <div className="inline-flex divide-x divide-slate-200 bg-slate-50 border border-slate-200 rounded-lg p-1 mb-8 shadow-sm">
-                <button className="px-6 py-2 text-sm font-bold bg-white text-emerald-700 shadow rounded-md">Prestasi</button>
-                <button className="px-6 py-2 text-sm font-bold text-slate-500 hover:text-slate-800">Penghargaan</button>
+                <Link to="/prestasi" className="px-6 py-2 text-sm font-bold bg-white text-emerald-700 shadow rounded-md">Prestasi</Link>
+                <Link to="/prestasi" className="px-6 py-2 text-sm font-bold text-slate-500 hover:text-slate-800">Penghargaan</Link>
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 leading-[1.1]">Raih Puncak <br />Prestasi</h2>
               <p className="text-slate-600 mb-10 text-lg">Catatan kebanggaan dari semangat juang dan dedikasi talenta-talenta terbaik SMAN 4 Kota Bogor.</p>
@@ -304,10 +305,10 @@ export default function Home() {
                   <SwiperSlide key={i}>
                     <div className="bg-white rounded-2xl overflow-hidden shadow-[0_10px_40px_-15px_rgba(0,0,0,0.1)] border border-slate-100 h-full flex flex-col group">
                       <div className="h-48 relative overflow-hidden">
-                        <img src={`https://images.unsplash.com/photo-${i % 2 === 0 ? '1523580494863-6f3031224c94' : '1543269865-cbf427effbad'}?auto=format&fit=crop&w=500&q=80`} alt="Achievement" className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+                        <img src={ach.imageUrl || `https://images.unsplash.com/photo-${i % 2 === 0 ? '1523580494863-6f3031224c94' : '1543269865-cbf427effbad'}?auto=format&fit=crop&w=500&q=80`} alt="Achievement" className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
                         <div className="absolute top-4 left-4">
                           <span className="bg-white/90 backdrop-blur text-emerald-800 text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
-                            {ach.level}
+                            {ach.level || "Regional"}
                           </span>
                         </div>
                       </div>
@@ -355,7 +356,7 @@ export default function Home() {
                 <SwiperSlide key={i} className="h-auto">
                   <motion.div variants={fadeInUp} className="bg-white rounded-[2rem] p-6 shadow-sm hover:shadow-2xl transition duration-500 border border-slate-100 group h-full flex flex-col">
                     <div className="h-56 rounded-2xl overflow-hidden mb-6 relative">
-                      <img src={`https://images.unsplash.com/photo-${1551000000000 + i * 1000}?auto=format&fit=crop&w=500&q=80`} alt="News" className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
+                      <img src={newsItem.imageUrl || `https://images.unsplash.com/photo-${1551000000000 + i * 1000}?auto=format&fit=crop&w=500&q=80`} alt="News" className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
                         onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=500&q=80' }} />
                       <div className="absolute top-4 right-4 bg-white/90 backdrop-blur text-slate-900 text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> News
@@ -367,9 +368,9 @@ export default function Home() {
                     <p className="text-slate-500 text-sm line-clamp-3 mb-6 flex-grow">{newsItem.content}</p>
                     <div className="flex justify-between items-center pt-4 border-t border-slate-100 mt-auto">
                       <p className="text-slate-400 text-sm font-medium">{new Date(newsItem.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
-                      <button className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm">
+                      <Link to="/info-publikasi" className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
-                      </button>
+                      </Link>
                     </div>
                   </motion.div>
                 </SwiperSlide>
