@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model SchoolProfile {
+  id               Int      @id @default(autoincrement())
+  name             String
+  description      String?
+  vision           String?
+  mission          String?
+  contactInfo      String?
+  logoUrl          String?
+  headerText       String?
+  backgroundUrl    String?
+  motto            String?
+  historyText      String?
+  historyImageUrl  String?
+  orgStructureUrl  String?
+  orgDesc          String?
+  headmasterName   String?
+  headmasterPhotoUrl String?
+  
+  studentCount     Int @default(0)
+  teacherCount     Int @default(0)
+  staffCount       Int @default(0)
+  alumniCount      Int @default(0)
+  achievementInt   Int @default(0)
+  achievementNat   Int @default(0)
+  achievementProv  Int @default(0)
+  achievementReg   Int @default(0)
+}
+
+model Achievement {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  date        DateTime?
+  imageUrl    String?
+  level       String? 
+}
+
+model Staff {
+  id          Int      @id @default(autoincrement())
+  name        String
+  position    String
+  bio         String?
+  imageUrl    String?
+  category    String?  @default("Guru")
+}
+
+model News {
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String
+  imageUrl    String?
+  publishedAt DateTime @default(now())
+  author      String?
+}
+
+model Program {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  isActive    Boolean  @default(true)
+}
+
+model Service {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  iconUrl     String?
+}
+
+model Publication {
+  id          Int      @id @default(autoincrement())
+  title       String
+  fileUrl     String?
+  publishedAt DateTime @default(now())
+}
