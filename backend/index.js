@@ -58,11 +58,11 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 async function initAdmin() {
   const adminCount = await prisma.admin.count();
   if (adminCount === 0) {
-    const hashedPassword = await bcrypt.hash('admin123', 10);
+    const hashedPassword = await bcrypt.hash('16132sman4bogor', 10);
     await prisma.admin.create({
-      data: { username: 'admin', password: hashedPassword }
+      data: { username: 'Staff-admin-1', password: hashedPassword }
     });
-    console.log("Default admin created: admin / admin123");
+    console.log("Default admin created: Staff-admin-1 / 16132sman4bogor");
   }
 }
 initAdmin();

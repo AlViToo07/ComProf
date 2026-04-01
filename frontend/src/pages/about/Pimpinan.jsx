@@ -6,7 +6,7 @@ export default function Pimpinan() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/staff')
+    axios.get('/api/staff')
       .then(res => {
          const filterData = res.data.filter(item => item.category === 'Pimpinan');
          setPimpinan(filterData);

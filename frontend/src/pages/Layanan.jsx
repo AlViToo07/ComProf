@@ -7,7 +7,7 @@ import { Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
-const api = axios.create({ baseURL: 'http://localhost:5000/api' });
+const api = axios.create({ baseURL: '/api' });
 
 export default function Layanan() {
   const [services, setServices] = useState([]);

@@ -17,7 +17,7 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', { username, password });
+      const res = await axios.post('/api/auth/login', { username, password });
       sessionStorage.setItem('adminToken', res.data.token);
       navigate('/admin', { replace: true });
     } catch (err) {

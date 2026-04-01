@@ -5,7 +5,7 @@ import 'react-quill-new/dist/quill.snow.css';
 import { useNavigate, Navigate } from 'react-router-dom';
 
 // Konfigurasi axios global dengan token interceptor
-const api = axios.create({ baseURL: 'http://localhost:5000/api' });
+const api = axios.create({ baseURL: '/api' });
 
 api.interceptors.request.use(config => {
   const token = sessionStorage.getItem('adminToken');
