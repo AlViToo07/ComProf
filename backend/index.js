@@ -127,8 +127,8 @@ app.put('/api/auth/password', verifyAdmin, async (req, res) => {
 // Upload endpoint
 app.post('/api/upload', verifyAdmin, upload.single('image'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'Tidak ada file' });
-  // Mengembalikan URL publik untuk gambar
-  const fileUrl = `http://localhost:${port}/uploads/${req.file.filename}`;
+  // Mengembalikan URL secara dinamis/relatif agar tidak error (localhost) di server VPS
+  const fileUrl = `/uploads/${req.file.filename}`;
   res.json({ url: fileUrl });
 });
 
