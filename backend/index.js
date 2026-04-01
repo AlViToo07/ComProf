@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -36,9 +38,18 @@ const upload = multer({
 const prisma = new PrismaClient();
 const app = express();
 const port = process.env.PORT || 5000;
-const SECRET_KEY = "SUPER_SECRET_KEY_FOR_SMAN4_COMPROF";
+const SECRET_KEY = process.env.JWT_SECRET || "SUPER_SECRET_KEY_FOR_SMAN4_COMPROF";
 
-app.use(cors());
+// --- MIDDLEWARES KEAMANAN ---
+app.use(helmet({
+  crossOriginResourcePolicy: false, // Agar file /uploads tetap bisa diakses secara publik
+  contentSecurityPolicy: false,     // Disable CSP strict agar frontend React bisa dimuat dengan tenang (bisa disesuaikan nanti)
+}));
+
+app.use(cors({
+  origin: process.env.FRONTEND_URL || '*', // Jika .env punya FRONTEND_URL, batasi ke situ. Jika tidak, tetap *
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+}));
 app.use(express.json());
 // Serve static files from 'uploads'
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -57,7 +68,14 @@ async function initAdmin() {
 initAdmin();
 
 // --- AUTH ROUTES ---
-app.post('/api/auth/login', async (req, res) => {
+// Mencegah Brute-force & Spam Login
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 menit
+  max: 10, // Maksimal 10 request per IP per 15 menit
+  message: { error: 'Terlalu banyak percobaan login, silakan coba lagi setelah 15 menit.' }
+});
+
+app.post('/api/auth/login', loginLimiter, async (req, res) => {
   try {
     const { username, password } = req.body;
     const admin = await prisma.admin.findUnique({ where: { username } });
@@ -271,6 +289,16 @@ app.delete('/api/publications/:id', verifyAdmin, async (req, res) => {
     await prisma.publication.delete({ where: { id: parseInt(req.params.id) } });
     res.json({ message: "Deleted" });
   } catch (error) { res.status(500).json({ error: 'Failed' }); }
+});
+
+// 7. Serve React Frontend
+// Menginstruksikan Express agar menjadikan folder 'dist' milik React sebagai wadah file statis utama
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+// Untuk rute apapun (*) yang bukan merupakan jalur /api di atas,
+// berikan file index.html milik React agar React Router yang mengambil alih halamannya
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
 });
 
 app.listen(port, () => {
