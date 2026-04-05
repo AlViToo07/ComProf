@@ -10,16 +10,28 @@ import 'swiper/css/effect-cards';
 export default function Staff() {
   const [staff, setStaff] = useState([]);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    // Simulated fetch
-    setStaff([
-      { id: 1, name: 'Hj. Emi Suhaemi, S.Pd', role: 'Kepala Sekolah', img: 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=400&q=80' },
-      { id: 2, name: 'Drs. Asep Sunandar, M.Si', role: 'Wakasek Kurikulum', img: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80' },
-      { id: 3, name: 'Siti Nurhaliza, M.Pd', role: 'Wakasek Kesiswaan', img: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80' },
-      { id: 4, name: 'Budi Raharjo, S.Kom', role: 'Guru TIK / Pembina OSIS', img: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80' },
-      { id: 5, name: 'Dra. Rina Kartika', role: 'Guru Bimbingan Konseling', img: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80' },
-      { id: 6, name: 'Anton Syahputra, S.Pd', role: 'Guru Geografi / Humas', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80' },
-    ]);
+    const fetchStaff = async () => {
+      try {
+        const fetchApi = (await import('axios')).default.create({ baseURL: '/api' });
+        const res = await fetchApi.get('/staff');
+        if (Array.isArray(res.data)) {
+          setStaff(res.data.map(item => ({
+            id: item.id,
+            name: item.name,
+            role: item.position,
+            img: item.imageUrl || 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=400&q=80'
+          })));
+        }
+      } catch (err) {
+        console.error("Failed to fetch staff", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStaff();
   }, []);
 
   const fadeInUp = {

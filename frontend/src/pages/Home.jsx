@@ -16,20 +16,23 @@ export default function Home() {
   const [profile, setProfile] = useState(null);
   const [achievements, setAchievements] = useState([]);
   const [news, setNews] = useState([]);
+  const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profRes, achRes, newsRes] = await Promise.all([
+        const [profRes, achRes, newsRes, progRes] = await Promise.all([
           api.get('/profile').catch(() => ({ data: {} })),
           api.get('/achievements').catch(() => ({ data: [] })),
-          api.get('/news').catch(() => ({ data: [] }))
+          api.get('/news').catch(() => ({ data: [] })),
+          api.get('/programs').catch(() => ({ data: [] }))
         ]);
 
         setProfile(profRes.data);
         setAchievements(achRes.data);
         setNews(newsRes.data);
+        setPrograms(Array.isArray(progRes.data) ? progRes.data : []);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -40,34 +43,19 @@ export default function Home() {
   }, []);
 
   // Default fallbacks in case DB is empty
-  const schoolName = profile?.name || "SMAN 4 Kota Bogor";
-  const schoolDesc = profile?.description || "Selamat datang di SMAN 4 Kota Bogor. Sekolah yang berkomitmen mengembangkan pendidikan berprestasi dan berkarakter menuju nilai kearifan lokal.";
-  const students = profile?.studentCount || "1.035";
-  const teachers = profile?.teacherCount || "45";
-  const staff = profile?.staffCount !== undefined ? profile.staffCount : "46";
-  const alumni = profile?.alumniCount || "10.000+";
+  const schoolName = profile?.name || "";
+  const schoolDesc = profile?.description || "Selamat datang di SMAN 4 Kota Bogor.";
+  const students = profile?.studentCount || "0";
+  const teachers = profile?.teacherCount || "0";
+  const staff = profile?.staffCount !== undefined ? profile.staffCount : "0";
+  const alumni = profile?.alumniCount || "0";
 
-  const displayAchievements = achievements.length > 0 ? achievements.slice(0, 5) : [
-    { title: 'Siswa SMA Negeri 4 Bogor Raih Juara 1 Olimpiade Matematika', date: new Date('2026-03-10'), level: 'Provinsi' },
-    { title: 'Tim Futsal SMA Negeri 4 Bogor Juara Turnamen Antar SMA', date: new Date('2026-04-02'), level: 'Nasional' },
-    { title: 'Juara Umum Lomba Paskibraka Tingkat Kota', date: new Date('2026-02-15'), level: 'Kota/Kab' },
-    { title: 'Medali Emas Kejuaraan Pencak Silat', date: new Date('2026-01-20'), level: 'Nasional' },
-    { title: 'Juara 1 Lomba Debat Bahasa Inggris Jawa Barat', date: new Date('2025-11-10'), level: 'Provinsi' },
-  ];
+  const displayAchievements = achievements.length > 0 ? achievements.slice(0, 5) : [];
 
-  const intlAchievements = profile?.achievementInt !== undefined && profile?.achievementInt !== null ? profile.achievementInt : "50+";
-  const natAchievements = profile?.achievementNat !== undefined && profile?.achievementNat !== null ? profile.achievementNat : "100+";
-  const provRegAchievements = (profile?.achievementProv !== undefined && profile?.achievementReg !== undefined && profile?.achievementProv !== null && profile?.achievementReg !== null)
-    ? (profile.achievementProv + profile.achievementReg)
-    : "1,000+";
+  const intlAchievements = profile?.achievementInt !== undefined && profile?.achievementInt !== null ? profile.achievementInt : "0";
+  const natAchievements = profile?.achievementNat !== undefined && profile?.achievementNat !== null ? profile.achievementNat : "0";
 
-  const displayNews = news.length > 0 ? news.slice(0, 5) : [
-    { title: 'Perayaan HUT Ke-43 SMAN 4 Bogor Berlangsung Meriah', publishedAt: new Date('2026-03-25'), content: 'Acara tahunan dirayakan dengan berbagai perlombaan dan pementasan seni oleh siswa.' },
-    { title: 'Sosialisasi Masuk Perguruan Tinggi Negeri', publishedAt: new Date('2026-03-20'), content: 'Kegiatan ini ditujukan untuk seluruh siswa kelas XII sebagai bekal persiapan masuk kuliah.' },
-    { title: 'Kegiatan Bakti Sosial OSIS', publishedAt: new Date('2026-03-15'), content: 'Bentuk kepedulian siswa terhadap lingkungan sekitar masyarakat Bogor.' },
-    { title: 'Pelaksanaan Ujian Tengah Semester', publishedAt: new Date('2026-03-10'), content: 'Jadwal persiapan ujian dirilis, diharapkan siswa mempersiapkan diri.' },
-    { title: 'Penerimaan Peserta Didik Baru (PPDB) 2026/2027', publishedAt: new Date('2026-03-01'), content: 'Pendaftaran PPDB sebentar lagi dibuka, cek jalur penerimaannya.' }
-  ];
+  const displayNews = news.length > 0 ? news.slice(0, 5) : [];
 
   if (loading) return (
     <div className="min-h-screen pt-40 flex justify-center items-center font-bold text-gray-500 bg-slate-50">
@@ -79,17 +67,7 @@ export default function Home() {
     </div>
   );
 
-  const heroImages = profile?.backgroundUrl ? [profile.backgroundUrl] : [
-    "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80",
-    "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1920&q=80",
-    "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1920&q=80"
-  ];
-
-  const programs = [
-    { title: 'Program Kelas Riset & Inovasi', desc: 'Program ini dirancang untuk mengembangkan nalar kritis dan analitis siswa melalui pembimbingan intensif dalam penggalian ide dan pelaksanaan penelitian.', icon: '🔬' },
-    { title: 'Program Digital & Teknologi Terapan', desc: 'Siswa dibekali dengan kemampuan literasi digital mendalam dan keterampilan aplikatif di bidang teknologi cerdas yang dapat diimplementasikan praktis.', icon: '💻' },
-    { title: 'Program Penguatan Karakter & Kepemimpinan', desc: 'Memfokuskan pembentukan moral kepemimpinan dan nilai kedisiplinan pada peserta didik, memastikan keseimbangan akademik dan soft-skill.', icon: '🌟' }
-  ];
+  const heroImages = profile?.backgroundUrl ? [profile.backgroundUrl] : [];
 
   const fadeInUp = {
     hidden: { opacity: 0, y: 40 },
@@ -253,7 +231,7 @@ export default function Home() {
                       {prog.icon}
                     </div>
                     <h3 className="font-bold text-xl mb-4 text-slate-100 leading-snug">{prog.title}</h3>
-                    <p className="text-slate-400 text-sm leading-relaxed flex-grow">{prog.desc}</p>
+                    <p className="text-slate-400 text-sm leading-relaxed flex-grow">{prog.description}</p>
                     <div className="mt-8 pt-6 border-t border-slate-700/50">
                       <span className="text-emerald-400 font-semibold text-sm flex items-center gap-2 group-hover:gap-3 transition-all cursor-pointer">
                         Pelajari lebih lanjut <span className="text-lg">→</span>
@@ -315,7 +293,13 @@ export default function Home() {
                       <div className="p-6 flex flex-col flex-grow">
                         <p className="text-slate-400 text-xs font-bold font-mono mb-3">{new Date(ach.date).toLocaleDateString()}</p>
                         <h3 className="font-bold text-lg text-slate-800 leading-snug mb-4 group-hover:text-emerald-600 transition-colors line-clamp-3">
-                          {ach.title}
+                          {ach.id ? (
+                            <Link to={`/prestasi/${ach.id}`} className="hover:underline">
+                              {ach.title}
+                            </Link>
+                          ) : (
+                            ach.title
+                          )}
                         </h3>
                         <div className="mt-auto">
                           <div className="w-12 h-1 bg-gradient-to-r from-emerald-500 to-transparent"></div>
@@ -362,13 +346,17 @@ export default function Home() {
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> News
                       </div>
                     </div>
-                    <h3 className="font-bold text-xl mb-3 text-slate-800 leading-snug group-hover:text-emerald-700 transition line-clamp-2">
-                      {newsItem.title}
-                    </h3>
-                    <p className="text-slate-500 text-sm line-clamp-3 mb-6 flex-grow">{newsItem.content}</p>
+                    <Link to={newsItem.id ? `/berita/${newsItem.id}` : "/info-publikasi"}>
+                      <h3 className="font-bold text-xl mb-3 text-slate-800 leading-snug group-hover:text-emerald-700 transition line-clamp-2">
+                        {newsItem.title}
+                      </h3>
+                    </Link>
+                    <p className="text-slate-500 text-sm line-clamp-3 mb-6 flex-grow">
+                      {newsItem.content ? newsItem.content.replace(/<[^>]+>/g, '') : ''}
+                    </p>
                     <div className="flex justify-between items-center pt-4 border-t border-slate-100 mt-auto">
                       <p className="text-slate-400 text-sm font-medium">{new Date(newsItem.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
-                      <Link to="/info-publikasi" className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm">
+                      <Link to={newsItem.id ? `/berita/${newsItem.id}` : "/info-publikasi"} className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
                       </Link>
                     </div>

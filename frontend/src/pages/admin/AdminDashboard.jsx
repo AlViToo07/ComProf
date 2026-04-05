@@ -30,6 +30,15 @@ const uploadImage = async (file) => {
   }
 };
 
+const quillModules = {
+   toolbar: [
+     [{ 'header': [1, 2, 3, false] }],
+     ['bold', 'italic', 'underline', 'strike'],
+     [{'list': 'ordered'}, {'list': 'bullet'}],
+     ['clean']
+   ],
+};
+
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('profil');
   const navigate = useNavigate();
@@ -204,7 +213,9 @@ function ProfileManager() {
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">Sambutan Kepsek / Pesan Utama</label>
-                  <textarea className="w-full border-2 border-white focus:border-emerald-500 rounded-lg p-3 outline-none transition h-32 shadow-sm" value={data.description || ''} onChange={e => setData({...data, description: e.target.value})}></textarea>
+                  <div className="bg-white rounded border pb-10">
+                     <ReactQuill theme="snow" value={data.description || ''} onChange={val => setData({...data, description: val})} modules={quillModules} className="h-32" />
+                  </div>
                 </div>
              </div>
           </div>
@@ -293,7 +304,9 @@ function NewsManager() {
                <input type="file" accept="image/jpeg, image/png, image/jpg" className="w-full border-2 border-white focus:border-emerald-500 rounded-lg p-3 outline-none shadow-sm bg-slate-50" onChange={async e => { if (e.target.files[0]) { const url = await uploadImage(e.target.files[0]); if(url) setForm({...form, imageUrl: url}); } }} />
             </div>
 
-            <textarea placeholder="Isi Konten Berita lengkap..." required className="w-full border-2 border-slate-200 focus:border-emerald-500 rounded-lg p-3 outline-none h-40" value={form.content} onChange={e => setForm({...form, content: e.target.value})}></textarea>
+            <div className="bg-white rounded border pb-10 mb-4 h-48">
+               <ReactQuill theme="snow" value={form.content || ''} onChange={val => setForm({...form, content: val})} modules={quillModules} className="h-full" placeholder="Isi Konten Berita lengkap..." />
+            </div>
             <button className="bg-emerald-600 text-white px-6 py-3 rounded-lg font-bold shadow-lg hover:bg-emerald-700 transition">Publikasikan Berita</button>
           </form>
        </div>
@@ -422,11 +435,15 @@ function PagesManager() {
             <h3 className="font-bold text-xl text-emerald-800 border-b pb-2">Visi Misi & Motto</h3>
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">Visi Sekolah</label>
-              <textarea className="w-full border-2 border-slate-200 focus:border-emerald-500 rounded-lg p-3 h-24" value={data.vision || ''} onChange={e => setData({...data, vision: e.target.value})}></textarea>
+              <div className="bg-white rounded border pb-10">
+                 <ReactQuill theme="snow" value={data.vision || ''} onChange={val => setData({...data, vision: val})} modules={quillModules} className="h-24" />
+              </div>
             </div>
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Misi Sekolah (Pisahkan dengan Enter)</label>
-              <textarea className="w-full border-2 border-slate-200 focus:border-emerald-500 rounded-lg p-3 h-32" value={data.mission || ''} onChange={e => setData({...data, mission: e.target.value})}></textarea>
+              <label className="block text-sm font-bold text-gray-700 mb-2">Misi Sekolah</label>
+              <div className="bg-white rounded border pb-10">
+                 <ReactQuill theme="snow" value={data.mission || ''} onChange={val => setData({...data, mission: val})} modules={quillModules} className="h-32" />
+              </div>
             </div>
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">Motto</label>
@@ -443,7 +460,9 @@ function PagesManager() {
             </div>
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">Deskripsi Singkat Struktur</label>
-              <textarea className="w-full border-2 border-slate-200 focus:border-emerald-500 rounded-lg p-3 h-24" value={data.orgDesc || ''} onChange={e => setData({...data, orgDesc: e.target.value})}></textarea>
+              <div className="bg-white rounded border pb-10">
+                 <ReactQuill theme="snow" value={data.orgDesc || ''} onChange={val => setData({...data, orgDesc: val})} modules={quillModules} className="h-24" />
+              </div>
             </div>
           </div>
 
@@ -489,7 +508,9 @@ function ExtrasManager() {
             <h2 className="text-xl font-extrabold mb-4 text-emerald-800 border-b pb-2">Tambah Layanan</h2>
             <form onSubmit={handleCreateSvc} className="space-y-4">
               <input placeholder="Nama Layanan (Cth: Perpus Digital)" required className="w-full border-2 rounded p-2" value={svcForm.title} onChange={e=>setSvcForm({...svcForm, title: e.target.value})} />
-              <textarea placeholder="Deskripsi Singkat..." required className="w-full border-2 rounded p-2 h-20" value={svcForm.description} onChange={e=>setSvcForm({...svcForm, description: e.target.value})}></textarea>
+              <div className="bg-white rounded border pb-10 h-32 mb-4 mt-2">
+                 <ReactQuill theme="snow" value={svcForm.description || ''} onChange={val => setSvcForm({...svcForm, description: val})} modules={quillModules} className="h-full" placeholder="Deskripsi Singkat..." />
+              </div>
               <button className="bg-emerald-600 text-white px-4 py-2 rounded font-bold">Simpan Layanan</button>
             </form>
           </div>
@@ -720,14 +741,7 @@ function SejarahManager() {
   if(loading) return <p className="text-center font-bold text-gray-400 mt-20 animate-pulse">Memuat data sejarah...</p>;
 
   // React Quill Modules for Toolbar
-  const modules = {
-     toolbar: [
-       [{ 'header': [1, 2, 3, false] }],
-       ['bold', 'italic', 'underline', 'strike'],
-       [{'list': 'ordered'}, {'list': 'bullet'}],
-       ['clean']
-     ],
-  };
+  // Using global quillModules
 
   return (
     <div className="bg-white p-10 rounded-xl shadow-lg border border-slate-100 max-w-5xl space-y-8">
@@ -755,7 +769,7 @@ function SejarahManager() {
                    theme="snow" 
                    value={data.historyText || ''} 
                    onChange={(val) => setData({...data, historyText: val})} 
-                   modules={modules}
+                   modules={quillModules}
                    className="h-80 pb-12"
                 />
              </div>

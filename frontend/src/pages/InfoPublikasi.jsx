@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import axios from 'axios';
 
 export default function InfoPublikasi() {
   const fadeInUp = {
@@ -12,12 +13,24 @@ export default function InfoPublikasi() {
     visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
   };
 
-  const documents = [
-    { title: "Kalender Akademik 2026/2027", type: "PDF", size: "2.4 MB", date: "12 Mar 2026" },
-    { title: "Tata Tertib Peserta Didik Baru", type: "PDF", size: "1.1 MB", date: "10 Mar 2026" },
-    { title: "Panduan Penggunaan Sistem E-Learning", type: "PDF", size: "3.5 MB", date: "05 Mar 2026" },
-    { title: "Brosur Pendaftaran PPDB", type: "PDF", size: "5.8 MB", date: "01 Mar 2026" }
-  ];
+  const [documents, setDocuments] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchDocs = async () => {
+      try {
+        const res = await axios.get('/api/publications');
+        if (Array.isArray(res.data)) {
+          setDocuments(res.data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch publications", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDocs();
+  }, []);
 
   return (
     <div className="pt-24 pb-20 min-h-screen bg-slate-50 font-sans overflow-hidden">
@@ -73,16 +86,23 @@ export default function InfoPublikasi() {
                        <div>
                           <h3 className="font-bold text-slate-800 text-lg group-hover:text-emerald-700 transition-colors">{doc.title}</h3>
                           <div className="flex gap-4 mt-2 text-xs font-semibold text-slate-500">
-                             <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>{doc.type}</span>
-                             <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>{doc.size}</span>
-                             <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>{doc.date}</span>
+                             <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>File</span>
+                             {doc.publishedAt && (
+                               <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>{new Date(doc.publishedAt).toLocaleDateString()}</span>
+                             )}
                           </div>
                        </div>
                     </div>
-                    <button className="w-full sm:w-auto px-6 py-2.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-lg group-hover:bg-emerald-600 group-hover:text-white group-hover:border-emerald-600 transition-all duration-300 shadow-sm flex items-center justify-center gap-2">
-                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                       Unduh
-                    </button>
+                    {doc.fileUrl ? (
+                      <a href={doc.fileUrl} target="_blank" rel="noreferrer" className="w-full sm:w-auto px-6 py-2.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-lg group-hover:bg-emerald-600 group-hover:text-white group-hover:border-emerald-600 transition-all duration-300 shadow-sm flex items-center justify-center gap-2">
+                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                         Unduh
+                      </a>
+                    ) : (
+                      <button disabled className="w-full sm:w-auto px-6 py-2.5 bg-slate-100 border border-slate-200 text-slate-400 font-bold rounded-lg flex items-center justify-center gap-2 cursor-not-allowed">
+                         Tidak Ada File
+                      </button>
+                    )}
                  </motion.div>
               ))}
            </div>

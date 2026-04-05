@@ -29,9 +29,8 @@ export default function Organisasi() {
                   <span className="text-gray-500 font-semibold">[ Area Gambar Struktur Organisasi Kosong ]</span>
                </div>
             )}
-            <p className="text-left mt-8 text-gray-600 leading-relaxed text-sm whitespace-pre-wrap">
-               {data.orgDesc || "Struktur hierarki sekolah mencakup Kepala Sekolah, Komite Sekolah, Wakil Kepala Sekolah bidang Kurikulum, Kesiswaan, Sarana Prasarana, Humas, serta tata usaha dan dewan pendidik."}
-            </p>
+            <div className="text-left mt-8 text-gray-600 leading-relaxed text-sm prose prose-emerald max-w-none" dangerouslySetInnerHTML={{ __html: data.orgDesc || "" }}>
+            </div>
         </div>
       </div>
     </div>

@@ -10,6 +10,9 @@ import Organisasi from './pages/about/Organisasi';
 import Sejarah from './pages/about/Sejarah';
 import Layanan from './pages/Layanan';
 import InfoPublikasi from './pages/InfoPublikasi';
+import BeritaDetail from './pages/BeritaDetail';
+import PrestasiDetail from './pages/PrestasiDetail';
+import LayananDetail from './pages/LayananDetail';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
@@ -30,6 +33,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/prestasi" element={<Achievements />} />
+            <Route path="/prestasi/:id" element={<PrestasiDetail />} />
+            <Route path="/berita/:id" element={<BeritaDetail />} />
+            <Route path="/layanan/:id" element={<LayananDetail />} />
             <Route path="/jajaran" element={<Staff />} />
             <Route path="/tentang/visi-misi" element={<VisiMisi />} />
             <Route path="/tentang/pimpinan" element={<Pimpinan />} />

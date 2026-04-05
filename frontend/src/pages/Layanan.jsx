@@ -3,6 +3,7 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
+import { Link } from 'react-router-dom';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -14,28 +15,15 @@ export default function Layanan() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/services').then(res => {
-      if(res.data && res.data.length > 0) {
-        setServices(res.data);
-      } else {
-        setServices([
-          { id: 1, title: 'Perpustakaan Digital', description: 'Akses ratusan buku cetak dan e-book yang terintegrasi secara online untuk mendukung kegiatan belajar siswa dan literasi warga sekolah.' },
-          { id: 2, title: 'E-Learning Terintegrasi', description: 'Platform pembelajaran jarak jauh dan manajemen tugas sekolah (LMS) khusus SMAN 4 Bogor yang interaktif dan mudah diakses.' },
-          { id: 3, title: 'Bimbingan Karir & Konseling', description: 'Layanan konsultasi psikometrik, penjurusan, dan pendampingan persiapan SNMPTN/SBMPTN oleh konselor berpengalaman.' },
-          { id: 4, title: 'Laboratorium Komputer Terkini', description: 'Akses perangkat komputer dengan spesifikasi tinggi dilengkapi dengan jaringan internet super cepat untuk praktik TIK.' },
-          { id: 5, title: 'Layanan Kesehatan Siswa (UKS)', description: 'Fasilitas kesehatan primer bagi seluruh warga sekolah dengan tenaga paramedis yang sigap selama jam operasional sekolah.' },
-          { id: 6, title: 'Ekstrakurikuler Unggulan', description: 'Penyaluran minat dan bakat secara komprehensif mulai dari bidang seni, olahraga, Paskibraka, Pramuka, hingga kelompok riset.' }
-        ]);
-      }
-      setLoading(false);
-    }).catch(() => {
-        setServices([
-          { id: 1, title: 'Perpustakaan Digital', description: 'Akses ratusan buku cetak dan e-book yang terintegrasi secara online untuk mendukung kegiatan belajar siswa dan literasi warga sekolah.' },
-          { id: 2, title: 'E-Learning Terintegrasi', description: 'Platform pembelajaran jarak jauh dan manajemen tugas sekolah (LMS) khusus SMAN 4 Bogor yang interaktif dan mudah diakses.' },
-          { id: 3, title: 'Bimbingan Karir & Konseling', description: 'Layanan konseling, penjurusan, dan pendampingan SNMPTN/SBMPTN oleh konselor berpengalaman.' },
-        ]);
+    api.get('/services')
+      .then(res => {
+        setServices(Array.isArray(res.data) ? res.data : []);
         setLoading(false);
-    });
+      })
+      .catch(() => {
+        setServices([]);
+        setLoading(false);
+      });
   }, []);
 
   const fadeInUp = {
@@ -96,13 +84,30 @@ export default function Layanan() {
                         <div className="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl mb-8 group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300 shadow-sm relative z-10">
                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                         </div>
-                        <h3 className="text-2xl font-black mb-4 text-slate-800 leading-snug group-hover:text-emerald-700 transition relative z-10">{i.title}</h3>
-                        <p className="text-slate-500 leading-relaxed text-sm flex-grow mb-8 relative z-10">{i.description}</p>
+                        <h3 className="text-2xl font-black mb-4 text-slate-800 leading-snug group-hover:text-emerald-700 transition relative z-10">
+                           {i.id ? (
+                              <Link to={`/layanan/${i.id}`} className="hover:underline">
+                                 {i.title}
+                              </Link>
+                           ) : (
+                              i.title
+                           )}
+                        </h3>
+                        <p className="text-slate-500 leading-relaxed text-sm flex-grow mb-8 relative z-10 line-clamp-4">
+                           {/* Strip HTML tags from description for preview */}
+                           {i.description ? i.description.replace(/<[^>]+>/g, '') : ''}
+                        </p>
                         
                         <div className="mt-auto pt-6 border-t border-slate-100 relative z-10">
-                           <button className="text-emerald-600 font-bold text-sm tracking-wide flex items-center gap-2 group-hover:gap-3 transition-all">
-                              Jelajahi <span className="text-lg">→</span>
-                           </button>
+                           {i.id ? (
+                              <Link to={`/layanan/${i.id}`} className="text-emerald-600 font-bold text-sm tracking-wide flex items-center gap-2 group-hover:gap-3 transition-all">
+                                 Jelajahi <span className="text-lg">→</span>
+                              </Link>
+                           ) : (
+                              <button className="text-emerald-600 font-bold text-sm tracking-wide flex items-center gap-2 group-hover:gap-3 transition-all">
+                                 Jelajahi <span className="text-lg">→</span>
+                              </button>
+                           )}
                         </div>
                      </motion.div>
                   </SwiperSlide>

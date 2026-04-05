@@ -175,6 +175,14 @@ app.get('/api/achievements', async (req, res) => {
   } catch (error) { res.status(500).json({ error: 'Failed to fetch' }); }
 });
 
+app.get('/api/achievements/:id', async (req, res) => {
+  try {
+    const data = await prisma.achievement.findUnique({ where: { id: parseInt(req.params.id) } });
+    if (!data) return res.status(404).json({ error: 'Not found' });
+    res.json(data);
+  } catch (error) { res.status(500).json({ error: 'Failed to fetch' }); }
+});
+
 app.post('/api/achievements', verifyAdmin, async (req, res) => {
   try {
     const { title, description, date, imageUrl, level } = req.body;
@@ -183,6 +191,17 @@ app.post('/api/achievements', verifyAdmin, async (req, res) => {
     });
     res.status(201).json(newRecord);
   } catch (error) { res.status(500).json({ error: 'Failed to create' }); }
+});
+
+app.put('/api/achievements/:id', verifyAdmin, async (req, res) => {
+  try {
+    const { title, description, date, imageUrl, level } = req.body;
+    const updatedRecord = await prisma.achievement.update({
+      where: { id: parseInt(req.params.id) },
+      data: { title, description, date: date ? new Date(date) : undefined, imageUrl, level }
+    });
+    res.json(updatedRecord);
+  } catch (error) { res.status(500).json({ error: 'Failed to update' }); }
 });
 
 app.delete('/api/achievements/:id', verifyAdmin, async (req, res) => {
@@ -196,6 +215,14 @@ app.delete('/api/achievements/:id', verifyAdmin, async (req, res) => {
 app.get('/api/staff', async (req, res) => {
   try {
     const data = await prisma.staff.findMany({ orderBy: { id: 'asc' } });
+    res.json(data);
+  } catch (error) { res.status(500).json({ error: 'Failed to fetch' }); }
+});
+
+app.get('/api/staff/:id', async (req, res) => {
+  try {
+    const data = await prisma.staff.findUnique({ where: { id: parseInt(req.params.id) } });
+    if (!data) return res.status(404).json({ error: 'Not found' });
     res.json(data);
   } catch (error) { res.status(500).json({ error: 'Failed to fetch' }); }
 });
@@ -234,12 +261,31 @@ app.get('/api/news', async (req, res) => {
   } catch (error) { res.status(500).json({ error: 'Failed to fetch' }); }
 });
 
+app.get('/api/news/:id', async (req, res) => {
+  try {
+    const data = await prisma.news.findUnique({ where: { id: parseInt(req.params.id) } });
+    if (!data) return res.status(404).json({ error: 'Not found' });
+    res.json(data);
+  } catch (error) { res.status(500).json({ error: 'Failed to fetch' }); }
+});
+
 app.post('/api/news', verifyAdmin, async (req, res) => {
   try {
     const { title, content, imageUrl, author } = req.body;
     const newRecord = await prisma.news.create({ data: { title, content, imageUrl, author } });
     res.status(201).json(newRecord);
   } catch (error) { res.status(500).json({ error: 'Failed' }); }
+});
+
+app.put('/api/news/:id', verifyAdmin, async (req, res) => {
+  try {
+    const { title, content, imageUrl, author } = req.body;
+    const updatedRecord = await prisma.news.update({
+      where: { id: parseInt(req.params.id) },
+      data: { title, content, imageUrl, author }
+    });
+    res.json(updatedRecord);
+  } catch (error) { res.status(500).json({ error: 'Failed to update' }); }
 });
 
 app.delete('/api/news/:id', verifyAdmin, async (req, res) => {
@@ -256,12 +302,29 @@ app.get('/api/services', async (req, res) => {
     res.json(data);
   } catch (error) { res.status(500).json({ error: 'Failed' }); }
 });
+app.get('/api/services/:id', async (req, res) => {
+  try {
+    const data = await prisma.service.findUnique({ where: { id: parseInt(req.params.id) } });
+    if (!data) return res.status(404).json({ error: 'Not found' });
+    res.json(data);
+  } catch (error) { res.status(500).json({ error: 'Failed to fetch' }); }
+});
 app.post('/api/services', verifyAdmin, async (req, res) => {
   try {
     const { title, description, iconUrl } = req.body;
     const record = await prisma.service.create({ data: { title, description, iconUrl } });
     res.json(record);
   } catch (error) { res.status(500).json({ error: 'Failed' }); }
+});
+app.put('/api/services/:id', verifyAdmin, async (req, res) => {
+  try {
+    const { title, description, iconUrl } = req.body;
+    const updatedRecord = await prisma.service.update({
+      where: { id: parseInt(req.params.id) },
+      data: { title, description, iconUrl }
+    });
+    res.json(updatedRecord);
+  } catch (error) { res.status(500).json({ error: 'Failed to update' }); }
 });
 app.delete('/api/services/:id', verifyAdmin, async (req, res) => {
   try {
@@ -277,12 +340,29 @@ app.get('/api/publications', async (req, res) => {
     res.json(data);
   } catch (error) { res.status(500).json({ error: 'Failed' }); }
 });
+app.get('/api/publications/:id', async (req, res) => {
+  try {
+    const data = await prisma.publication.findUnique({ where: { id: parseInt(req.params.id) } });
+    if (!data) return res.status(404).json({ error: 'Not found' });
+    res.json(data);
+  } catch (error) { res.status(500).json({ error: 'Failed to fetch' }); }
+});
 app.post('/api/publications', verifyAdmin, async (req, res) => {
   try {
     const { title, fileUrl } = req.body;
     const record = await prisma.publication.create({ data: { title, fileUrl } });
     res.json(record);
   } catch (error) { res.status(500).json({ error: 'Failed' }); }
+});
+app.put('/api/publications/:id', verifyAdmin, async (req, res) => {
+  try {
+    const { title, fileUrl } = req.body;
+    const updatedRecord = await prisma.publication.update({
+      where: { id: parseInt(req.params.id) },
+      data: { title, fileUrl }
+    });
+    res.json(updatedRecord);
+  } catch (error) { res.status(500).json({ error: 'Failed to update' }); }
 });
 app.delete('/api/publications/:id', verifyAdmin, async (req, res) => {
   try {

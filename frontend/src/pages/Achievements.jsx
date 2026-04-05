@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const api = axios.create({ baseURL: '/api' });
 
@@ -10,27 +11,15 @@ export default function Achievements() {
   const [filter, setFilter] = useState('Semua');
 
   useEffect(() => {
-    api.get('/achievements').then(res => {
-      if (res.data && res.data.length > 0) {
-        setAchievements(res.data);
-      } else {
-        // Fallback placeholder data
-        setAchievements([
-          { id: 1, title: 'Juara 1 Lomba Web Design', date: '2026-05-12T00:00:00.000Z', level: 'Nasional', desc: 'Siswa kelas XII memenangkan kompetisi membuat website interaktif.' },
-          { id: 2, title: 'Medali Emas Olimpiade Fisika', date: '2026-03-20T00:00:00.000Z', level: 'Provinsi', desc: 'Meraih medali emas dengan skor tertinggi di tingkat provinsi Jawa Barat.' },
-          { id: 3, title: 'Juara Umum Paskibraka', date: '2026-02-15T00:00:00.000Z', level: 'Kota/Kab', desc: 'Tim Paskibra SMAN 4 Bogor kembali membawa piala bergilir juara umum.' },
-          { id: 4, title: 'Juara 2 Debat Bahasa Inggris', date: '2025-11-10T00:00:00.000Z', level: 'Nasional', desc: 'Berhasil melaju ke tahap final tingkat nasional mewakili regional.' },
-          { id: 5, title: 'Best Delegation Model United Nations', date: '2025-09-05T00:00:00.000Z', level: 'Internasional', desc: 'Delegasi MUN sekolah meraih predikat terbaik di forum simulasi PBB tingkat wilayah Asia.' },
-        ]);
-      }
-      setLoading(false);
-    }).catch(() => {
-       setAchievements([
-          { id: 1, title: 'Juara 1 Lomba Web Design', date: '2026-05-12T00:00:00.000Z', level: 'Nasional', desc: 'Siswa kelas XII memenangkan kompetisi membuat website interaktif.' },
-          { id: 2, title: 'Medali Emas Olimpiade Fisika', date: '2026-03-20T00:00:00.000Z', level: 'Provinsi', desc: 'Meraih medali emas dengan skor tertinggi di tingkat provinsi Jawa Barat.' }
-       ]);
-       setLoading(false);
-    });
+    api.get('/achievements')
+      .then(res => {
+        setAchievements(Array.isArray(res.data) ? res.data : []);
+        setLoading(false);
+      })
+      .catch(() => {
+        setAchievements([]);
+        setLoading(false);
+      });
   }, []);
 
   const fadeInUp = {
@@ -107,12 +96,22 @@ export default function Achievements() {
                      </span>
                   </div>
                   
-                  <h3 className="text-2xl font-black text-slate-800 mb-3 group-hover:text-emerald-700 transition-colors leading-snug">{ach.title}</h3>
+                  <h3 className="text-2xl font-black text-slate-800 mb-3 group-hover:text-emerald-700 transition-colors leading-snug">
+                     {ach.id ? (
+                        <Link to={`/prestasi/${ach.id}`} className="hover:underline">
+                           {ach.title}
+                        </Link>
+                     ) : (
+                        ach.title
+                     )}
+                  </h3>
                   <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 font-mono mb-4">
                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                      {new Date(ach.date).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}
                   </div>
-                  <p className="text-slate-500 text-sm leading-relaxed">{ach.desc || 'Prestasi membanggakan dari siswa-siswi terbaik untuk membawa nama baik almamater di kancah ini.'}</p>
+                  <p className="text-slate-500 text-sm leading-relaxed line-clamp-3">
+                     {ach.description ? ach.description.replace(/<[^>]+>/g, '') : 'Prestasi membanggakan dari siswa-siswi terbaik untuk membawa nama baik almamater di kancah ini.'}
+                  </p>
                </motion.div>
             ))}
          </motion.div>
