@@ -1,13 +1,16 @@
 /**
  * SEEDER — ComProf SMAN 4 Bogor
  * Jalankan: node seed.js
- * Mengisi semua tabel dengan data contoh untuk testing fitur.
+ * Reset & isi ulang semua: node seed.js --force
  */
 
+require('dotenv').config();  // WAJIB: load DATABASE_URL dari .env
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
 
 const prisma = new PrismaClient();
+const FORCE = process.argv.includes('--force');
+
 
 // Helper: buat slug dari teks
 function generateSlug(title) {
@@ -23,6 +26,18 @@ function generateSlug(title) {
 async function main() {
   console.log('🌱 Memulai seeder...\n');
 
+  if (FORCE) {
+    console.log('⚠️  Mode --force aktif: menghapus semua data lama...');
+    await prisma.publication.deleteMany();
+    await prisma.service.deleteMany();
+    await prisma.achievement.deleteMany();
+    await prisma.news.deleteMany();
+    await prisma.staff.deleteMany();
+    await prisma.schoolProfile.deleteMany();
+    // Admin TIDAK dihapus agar tidak kehilangan password custom
+    console.log('✅ Data lama berhasil dihapus.\n');
+  }
+
   // ── 1. Admin ────────────────────────────────────────────────────────────────
   const adminCount = await prisma.admin.count();
   if (adminCount === 0) {
@@ -30,8 +45,9 @@ async function main() {
     await prisma.admin.create({ data: { username: 'Staff-admin-1', password: hashed } });
     console.log('✅ Admin dibuat: Staff-admin-1 / 16132sman4bogor');
   } else {
-    console.log('⏭️  Admin sudah ada, lewati.');
+    console.log('⏭️  Admin sudah ada, lewati. (gunakan --force untuk reset data lain)');
   }
+
 
   // ── 2. Profil Sekolah ───────────────────────────────────────────────────────
   const profileCount = await prisma.schoolProfile.count();
