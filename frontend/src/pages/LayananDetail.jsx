@@ -2,94 +2,87 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { FiArrowLeft, FiBox } from 'react-icons/fi';
 
 const api = axios.create({ baseURL: '/api' });
 
 export default function LayananDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [data, setData] = useState(null);
+  const [layanan, setLayanan] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
-    const fetchDetail = async () => {
-      try {
-        const res = await api.get(`/services`);
-        // We find by id because there might not be a specific GET /services/:id if it wasn't added
-        // Let's use the list endpoint and find the specific one for safety, or try GET /services/:id
-        const item = res.data.find(s => s.id === parseInt(id));
-        if (item) {
-          setData(item);
-        } else {
-          // If not found in list, we can try direct get
-           const resSingle = await api.get(`/services/${id}`);
-           setData(resSingle.data);
-        }
-      } catch (err) {
-        console.error("Layanan tidak ditemukan:", err);
-        navigate('/layanan');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDetail();
-  }, [id, navigate]);
+    window.scrollTo(0, 0);
+    api.get(`/services/${id}`)
+      .then(res => setLayanan(res.data))
+      .catch(err => { if (err.response?.status === 404) setNotFound(true); })
+      .finally(() => setLoading(false));
+  }, [id]);
 
   if (loading) return (
-    <div className="min-h-screen pt-40 flex justify-center items-center font-bold text-gray-500 bg-slate-50">
-      <motion.div animate={{ rotate: 360, scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1.5 }} className="w-16 h-16 border-t-4 border-emerald-600 border-solid rounded-full" />
+    <div className="min-h-screen pt-40 flex justify-center items-center bg-slate-50">
+      <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }}
+        className="w-12 h-12 border-4 border-slate-200 border-t-emerald-600 rounded-full" />
     </div>
   );
 
-  if (!data) return null;
+  if (notFound || !layanan) return (
+    <div className="min-h-screen pt-40 flex flex-col justify-center items-center bg-slate-50 text-center px-4">
+      <div className="text-7xl mb-6">🏫</div>
+      <h1 className="text-3xl font-black text-slate-800 mb-4">Layanan Tidak Ditemukan</h1>
+      <Link to="/layanan" className="px-6 py-3 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-700 transition">
+        Kembali ke Layanan
+      </Link>
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-24 pb-20 font-sans">
-      <div className="max-w-4xl mx-auto px-4">
-        {/* Breadcrumb & Navigation */}
-        <div className="mb-8 flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="p-2 bg-white text-slate-500 hover:text-emerald-600 rounded-full shadow-sm hover:shadow transition-all group">
-            <FiArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+    <div className="bg-slate-50 min-h-screen font-sans pb-24">
+      {/* Hero */}
+      <div className="bg-emerald-900 pt-32 pb-20 px-4 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-teal-500/10 rounded-full blur-3xl" />
+        <div className="max-w-4xl mx-auto relative z-10">
+          <button onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-emerald-300 hover:text-white font-bold text-sm mb-8 transition">
+            ← Kembali ke Layanan
           </button>
-          <div className="text-sm font-semibold text-slate-500 flex gap-2 items-center">
-            <Link to="/" className="hover:text-emerald-600 transition">Beranda</Link>
-            <span>/</span>
-            <Link to="/layanan" className="hover:text-emerald-600 transition">Layanan</Link>
-            <span>/</span>
-            <span className="text-emerald-600">Detail</span>
+          <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center mb-6">
+            <svg className="w-8 h-8 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
           </div>
+          <h1 className="text-4xl md:text-6xl font-black text-white leading-tight">{layanan.title}</h1>
         </div>
+      </div>
 
-        {/* Presentation Card */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="bg-white rounded-[2rem] p-8 md:p-12 shadow-[0_15px_40px_rgb(0,0,0,0.05)] border border-slate-100 flex flex-col items-center text-center">
-          
-          <div className="w-20 h-20 bg-emerald-100 rounded-[2rem] flex items-center justify-center mb-6 shadow-inner rotate-3">
-             <FiBox className="text-emerald-600" size={32} />
-          </div>
+      {/* Content */}
+      <div className="max-w-4xl mx-auto px-4 -mt-8 relative z-20">
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+          <div className="bg-white rounded-3xl shadow-2xl border border-slate-100 p-8 md:p-14">
+            {layanan.description ? (
+              <div
+                className="prose prose-emerald prose-lg max-w-none
+                  prose-headings:text-slate-900 prose-headings:font-black
+                  prose-p:text-slate-600 prose-p:leading-relaxed
+                  prose-a:text-emerald-600 prose-strong:text-slate-800
+                  prose-ul:text-slate-600 prose-ol:text-slate-600"
+                dangerouslySetInnerHTML={{ __html: layanan.description }}
+              />
+            ) : (
+              <p className="text-slate-500 text-center py-12 italic">Detail layanan belum tersedia.</p>
+            )}
 
-          <h1 className="text-3xl md:text-5xl font-black text-slate-900 leading-tight mb-8 max-w-3xl">
-            {data.title}
-          </h1>
-
-          {/* Details */}
-          {data.description && (
-            <div className="w-full text-left bg-slate-50 rounded-2xl p-8 border border-slate-100 shadow-inner">
-              <div className="prose prose-emerald max-w-none text-slate-700 text-lg">
-                 <div dangerouslySetInnerHTML={{ __html: data.description }} className="rich-text-content" />
-              </div>
+            <div className="mt-12 pt-6 border-t border-slate-100 flex justify-center">
+              <Link to="/layanan"
+                className="flex items-center gap-2 px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-full transition-all">
+                ← Semua Layanan
+              </Link>
             </div>
-          )}
+          </div>
         </motion.div>
       </div>
-      
-      <style>{`
-         .rich-text-content p { margin-bottom: 1.5em; line-height: 1.8; color: #334155; }
-         .rich-text-content h1, .rich-text-content h2, .rich-text-content h3 { font-weight: 800; color: #0f172a; margin-top: 1.5em; margin-bottom: 0.5em; }
-         .rich-text-content ul, .rich-text-content ol { padding-left: 1.5em; margin-bottom: 1.5em; list-style-position: outside; }
-         .rich-text-content ul { list-style-type: disc; }
-         .rich-text-content ol { list-style-type: decimal; }
-      `}</style>
     </div>
   );
 }

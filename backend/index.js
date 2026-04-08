@@ -40,6 +40,30 @@ const app = express();
 const port = process.env.PORT || 5000;
 const SECRET_KEY = process.env.JWT_SECRET || "SUPER_SECRET_KEY_FOR_SMAN4_COMPROF";
 
+// Helper: generate slug dari title
+function generateSlug(title) {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '') // hapus karakter spesial
+    .trim()
+    .replace(/\s+/g, '-')          // spasi jadi strip
+    .replace(/-+/g, '-')           // strip ganda jadi satu
+    .substring(0, 100);            // batasi panjang
+}
+
+// Helper: pastikan slug unik (tambah angka jika konflik)
+async function makeUniqueSlug(model, baseSlug, excludeId = null) {
+  let slug = baseSlug;
+  let counter = 1;
+  while (true) {
+    const where = { slug };
+    if (excludeId) where.id = { not: excludeId };
+    const existing = await model.findFirst({ where });
+    if (!existing) return slug;
+    slug = `${baseSlug}-${counter++}`;
+  }
+}
+
 // --- MIDDLEWARES KEAMANAN ---
 app.use(helmet({
   crossOriginResourcePolicy: false, // Agar file /uploads tetap bisa diakses secara publik
@@ -175,6 +199,14 @@ app.get('/api/achievements', async (req, res) => {
   } catch (error) { res.status(500).json({ error: 'Failed to fetch' }); }
 });
 
+app.get('/api/achievements/slug/:slug', async (req, res) => {
+  try {
+    const data = await prisma.achievement.findUnique({ where: { slug: req.params.slug } });
+    if (!data) return res.status(404).json({ error: 'Not found' });
+    res.json(data);
+  } catch (error) { res.status(500).json({ error: 'Failed to fetch' }); }
+});
+
 app.get('/api/achievements/:id', async (req, res) => {
   try {
     const data = await prisma.achievement.findUnique({ where: { id: parseInt(req.params.id) } });
@@ -186,8 +218,10 @@ app.get('/api/achievements/:id', async (req, res) => {
 app.post('/api/achievements', verifyAdmin, async (req, res) => {
   try {
     const { title, description, date, imageUrl, level } = req.body;
+    const baseSlug = generateSlug(title);
+    const slug = await makeUniqueSlug(prisma.achievement, baseSlug);
     const newRecord = await prisma.achievement.create({
-      data: { title, description, date: new Date(date), imageUrl, level }
+      data: { title, slug, description, date: new Date(date), imageUrl, level }
     });
     res.status(201).json(newRecord);
   } catch (error) { res.status(500).json({ error: 'Failed to create' }); }
@@ -196,9 +230,12 @@ app.post('/api/achievements', verifyAdmin, async (req, res) => {
 app.put('/api/achievements/:id', verifyAdmin, async (req, res) => {
   try {
     const { title, description, date, imageUrl, level } = req.body;
+    const id = parseInt(req.params.id);
+    const baseSlug = generateSlug(title);
+    const slug = await makeUniqueSlug(prisma.achievement, baseSlug, id);
     const updatedRecord = await prisma.achievement.update({
-      where: { id: parseInt(req.params.id) },
-      data: { title, description, date: date ? new Date(date) : undefined, imageUrl, level }
+      where: { id },
+      data: { title, slug, description, date: date ? new Date(date) : undefined, imageUrl, level }
     });
     res.json(updatedRecord);
   } catch (error) { res.status(500).json({ error: 'Failed to update' }); }
@@ -261,6 +298,14 @@ app.get('/api/news', async (req, res) => {
   } catch (error) { res.status(500).json({ error: 'Failed to fetch' }); }
 });
 
+app.get('/api/news/slug/:slug', async (req, res) => {
+  try {
+    const data = await prisma.news.findUnique({ where: { slug: req.params.slug } });
+    if (!data) return res.status(404).json({ error: 'Not found' });
+    res.json(data);
+  } catch (error) { res.status(500).json({ error: 'Failed to fetch' }); }
+});
+
 app.get('/api/news/:id', async (req, res) => {
   try {
     const data = await prisma.news.findUnique({ where: { id: parseInt(req.params.id) } });
@@ -272,7 +317,9 @@ app.get('/api/news/:id', async (req, res) => {
 app.post('/api/news', verifyAdmin, async (req, res) => {
   try {
     const { title, content, imageUrl, author } = req.body;
-    const newRecord = await prisma.news.create({ data: { title, content, imageUrl, author } });
+    const baseSlug = generateSlug(title);
+    const slug = await makeUniqueSlug(prisma.news, baseSlug);
+    const newRecord = await prisma.news.create({ data: { title, slug, content, imageUrl, author } });
     res.status(201).json(newRecord);
   } catch (error) { res.status(500).json({ error: 'Failed' }); }
 });
@@ -280,9 +327,12 @@ app.post('/api/news', verifyAdmin, async (req, res) => {
 app.put('/api/news/:id', verifyAdmin, async (req, res) => {
   try {
     const { title, content, imageUrl, author } = req.body;
+    const id = parseInt(req.params.id);
+    const baseSlug = generateSlug(title);
+    const slug = await makeUniqueSlug(prisma.news, baseSlug, id);
     const updatedRecord = await prisma.news.update({
-      where: { id: parseInt(req.params.id) },
-      data: { title, content, imageUrl, author }
+      where: { id },
+      data: { title, slug, content, imageUrl, author }
     });
     res.json(updatedRecord);
   } catch (error) { res.status(500).json({ error: 'Failed to update' }); }

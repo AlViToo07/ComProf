@@ -45,6 +45,7 @@ model SchoolProfile {
 model Achievement {
   id          Int      @id @default(autoincrement())
   title       String
+  slug        String?  @unique
   description String?
   date        DateTime?
   imageUrl    String?
@@ -63,6 +64,7 @@ model Staff {
 model News {
   id          Int      @id @default(autoincrement())
   title       String
+  slug        String?  @unique
   content     String
   imageUrl    String?
   publishedAt DateTime @default(now())

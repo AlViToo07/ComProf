@@ -98,7 +98,7 @@ export default function Achievements() {
                   
                   <h3 className="text-2xl font-black text-slate-800 mb-3 group-hover:text-emerald-700 transition-colors leading-snug">
                      {ach.id ? (
-                        <Link to={`/prestasi/${ach.id}`} className="hover:underline">
+                        <Link to={`/prestasi/${ach.slug || ach.id}`} className="hover:underline">
                            {ach.title}
                         </Link>
                      ) : (
