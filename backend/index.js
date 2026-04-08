@@ -201,7 +201,14 @@ app.get('/api/achievements', async (req, res) => {
 
 app.get('/api/achievements/slug/:slug', async (req, res) => {
   try {
-    const data = await prisma.achievement.findUnique({ where: { slug: req.params.slug } });
+    const slugParam = req.params.slug;
+    let data = await prisma.achievement.findUnique({ where: { slug: slugParam } });
+    
+    // Fallback: Jika tak ditemukan & parameter berupa angka, cari berdasarkan ID.
+    if (!data && !isNaN(slugParam)) {
+      data = await prisma.achievement.findUnique({ where: { id: parseInt(slugParam) } });
+    }
+
     if (!data) return res.status(404).json({ error: 'Not found' });
     res.json(data);
   } catch (error) { res.status(500).json({ error: 'Failed to fetch' }); }
@@ -300,7 +307,14 @@ app.get('/api/news', async (req, res) => {
 
 app.get('/api/news/slug/:slug', async (req, res) => {
   try {
-    const data = await prisma.news.findUnique({ where: { slug: req.params.slug } });
+    const slugParam = req.params.slug;
+    let data = await prisma.news.findUnique({ where: { slug: slugParam } });
+    
+    // Fallback: Jika tak ditemukan & parameter berupa angka, cari berdasarkan ID.
+    if (!data && !isNaN(slugParam)) {
+      data = await prisma.news.findUnique({ where: { id: parseInt(slugParam) } });
+    }
+
     if (!data) return res.status(404).json({ error: 'Not found' });
     res.json(data);
   } catch (error) { res.status(500).json({ error: 'Failed to fetch' }); }

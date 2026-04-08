@@ -293,13 +293,9 @@ export default function Home() {
                       <div className="p-6 flex flex-col flex-grow">
                         <p className="text-slate-400 text-xs font-bold font-mono mb-3">{new Date(ach.date).toLocaleDateString()}</p>
                         <h3 className="font-bold text-lg text-slate-800 leading-snug mb-4 group-hover:text-emerald-600 transition-colors line-clamp-3">
-                          {ach.id ? (
-                            <Link to={`/prestasi/${ach.id}`} className="hover:underline">
-                              {ach.title}
-                            </Link>
-                          ) : (
-                            ach.title
-                          )}
+                          <Link to={`/prestasi/${ach.slug || ach.id}`} className="hover:underline">
+                            {ach.title}
+                          </Link>
                         </h3>
                         <div className="mt-auto">
                           <div className="w-12 h-1 bg-gradient-to-r from-emerald-500 to-transparent"></div>
@@ -346,7 +342,7 @@ export default function Home() {
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> News
                       </div>
                     </div>
-                    <Link to={newsItem.slug ? `/berita/${newsItem.slug}` : "/info-publikasi"}>
+                    <Link to={newsItem.id ? `/berita/${newsItem.slug || newsItem.id}` : "/info-publikasi"}>
                       <h3 className="font-bold text-xl mb-3 text-slate-800 leading-snug group-hover:text-emerald-700 transition line-clamp-2">
                         {newsItem.title}
                       </h3>
@@ -356,7 +352,7 @@ export default function Home() {
                     </p>
                     <div className="flex justify-between items-center pt-4 border-t border-slate-100 mt-auto">
                       <p className="text-slate-400 text-sm font-medium">{new Date(newsItem.publishedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
-                      <Link to={newsItem.slug ? `/berita/${newsItem.slug}` : "/info-publikasi"} className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm">
+                      <Link to={newsItem.id ? `/berita/${newsItem.slug || newsItem.id}` : "/info-publikasi"} className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
                       </Link>
                     </div>
