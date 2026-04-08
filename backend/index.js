@@ -80,17 +80,20 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Initialize Default Admin
 async function initAdmin() {
-  const adminCount = await prisma.admin.count();
-  if (adminCount === 0) {
-    const hashedPassword = await bcrypt.hash('16132sman4bogor', 10);
-    await prisma.admin.create({
-      data: { username: 'Staff-admin-1', password: hashedPassword }
-    });
-    console.log("Default admin created: Staff-admin-1 / 16132sman4bogor");
+  try {
+    const adminCount = await prisma.admin.count();
+    if (adminCount === 0) {
+      const hashedPassword = await bcrypt.hash('16132sman4bogor', 10);
+      await prisma.admin.create({
+        data: { username: 'Staff-admin-1', password: hashedPassword }
+      });
+      console.log("Default admin created: Staff-admin-1 / 16132sman4bogor");
+    }
+  } catch (error) {
+    console.error("⚠️ Peringatan: Tidak dapat terhubung ke database saat inisialisasi awal. Pastikan Prisma sudah disinkronkan:", error.message);
   }
 }
 initAdmin();
-
 // --- AUTH ROUTES ---
 // Mencegah Brute-force & Spam Login
 const loginLimiter = rateLimit({
