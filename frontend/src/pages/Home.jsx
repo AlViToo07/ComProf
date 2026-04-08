@@ -233,9 +233,9 @@ export default function Home() {
                     <h3 className="font-bold text-xl mb-4 text-slate-100 leading-snug">{prog.title}</h3>
                     <p className="text-slate-400 text-sm leading-relaxed flex-grow">{prog.description}</p>
                     <div className="mt-8 pt-6 border-t border-slate-700/50">
-                      <span className="text-emerald-400 font-semibold text-sm flex items-center gap-2 group-hover:gap-3 transition-all cursor-pointer">
+                      <Link to="/layanan" className="text-emerald-400 font-semibold text-sm flex items-center gap-2 group-hover:gap-3 transition-all cursor-pointer">
                         Pelajari lebih lanjut <span className="text-lg">→</span>
-                      </span>
+                      </Link>
                     </div>
                   </motion.div>
                 </SwiperSlide>

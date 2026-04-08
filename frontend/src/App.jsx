@@ -33,8 +33,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/prestasi" element={<Achievements />} />
-            <Route path="/prestasi/:id" element={<PrestasiDetail />} />
-            <Route path="/berita/:id" element={<BeritaDetail />} />
+            <Route path="/prestasi/:slug" element={<PrestasiDetail />} />
+            <Route path="/berita/:slug" element={<BeritaDetail />} />
             <Route path="/layanan/:id" element={<LayananDetail />} />
             <Route path="/jajaran" element={<Staff />} />
             <Route path="/tentang/visi-misi" element={<VisiMisi />} />
