@@ -38,7 +38,7 @@ export default function BeritaDetail() {
     </div>
   );
 
-  if (notFound) return (
+  if (notFound || !news) return (
     <div className="min-h-screen pt-40 flex flex-col justify-center items-center bg-slate-50 text-center px-4">
       <div className="text-7xl mb-6">📰</div>
       <h1 className="text-3xl font-black text-slate-800 mb-4">Berita Tidak Ditemukan</h1>
