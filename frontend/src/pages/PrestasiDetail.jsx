@@ -25,6 +25,9 @@ export default function PrestasiDetail() {
     const fetchData = async () => {
       try {
         const res = await api.get(`/achievements/slug/${slug}`);
+        if (typeof res.data !== 'object' || res.headers['content-type']?.includes('text/html')) {
+          throw new Error("Invalid API response: received HTML string.");
+        }
         setAchievement(res.data);
         const allRes = await api.get('/achievements');
         setRelated(allRes.data.filter(a => a.slug !== slug).slice(0, 3));

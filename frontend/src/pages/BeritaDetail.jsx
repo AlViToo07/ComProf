@@ -18,6 +18,9 @@ export default function BeritaDetail() {
     const fetchNews = async () => {
       try {
         const res = await api.get(`/news/slug/${slug}`);
+        if (typeof res.data !== 'object' || res.headers['content-type']?.includes('text/html')) {
+          throw new Error("Invalid API response: received HTML string.");
+        }
         setNews(res.data);
         // Ambil berita lain untuk "Berita Terkait"
         const allRes = await api.get('/news');
